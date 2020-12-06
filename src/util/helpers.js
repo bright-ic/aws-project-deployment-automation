@@ -50,3 +50,48 @@ const clone_repository = async (repo_url, local_dir, cloneOpts = {}) => {
     }
 }
 exports.clone_repository = clone_repository;
+
+const file_exists = (path="") => {
+    if(path !== "") {
+        try {
+            if (fs.existsSync(path)) {
+              return true;
+            }
+          } catch(err) {
+            return false;
+          }
+    }
+    return "invalid path";
+}
+exports.file_exists = file_exists
+
+
+const addOrReplaceFile = (filename="", content="", cb) => {
+    
+    fs.writeFile(filename, content, function (err) {
+        if (err) return cb && cb(err, false);
+        
+        return cb && cb(null, true);
+    });
+}
+exports.addOrReplaceFile = addOrReplaceFile;
+
+/* Json file reader */
+const jsonReader = (filePath, cb) => {
+    try {
+        fs.readFile(filePath, (err, fileData) => {
+            if (err) {
+              return cb && cb(err);
+            }
+            try {
+              const object = JSON.parse(fileData);
+              return cb && cb(null, object);
+            } catch (err) {
+              return cb && cb(err);
+            }
+          });
+    } catch (err) {
+        return cb && cb(err);
+    }
+}
+exports.jsonReader = jsonReader;
